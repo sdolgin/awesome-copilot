@@ -25,10 +25,10 @@ Transform any repository into a comprehensive analysis with two deliverables:
 **EXECUTE these commands immediately** to understand the repository structure and purpose:
 
 1. Get repository overview by running:
-   `find . -name "*.md" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" | head -20`
+   `Get-ChildItem -Recurse -Include "*.md","*.json","*.yaml","*.yml" | Select-Object -First 20 | Select-Object Name, DirectoryName`
 
 2. Understand project structure by running:
-   `tree -L 3 -I 'node_modules|.git|bin|obj'` (or use `ls -la` if tree is not available)
+   `Get-ChildItem -Recurse -Directory | Where-Object {$_.Name -notmatch "(node_modules|\.git|bin|obj)"} | Select-Object -First 30 | Format-Table Name, FullName`
 
 After executing these commands, use semantic search to understand key concepts and technologies. Look for:
 - Configuration files (package.json, pom.xml, requirements.txt, etc.)
@@ -51,23 +51,23 @@ Create comprehensive technical inventory:
 
 **Step 1: Basic Statistics** - Run these commands to get repository metrics:
 - `git rev-list --all --count` (total commit count)
-- `git log --oneline --since="1 year ago" | wc -l` (commits in last year)
+- `(git log --oneline --since="1 year ago").Count` (commits in last year)
 
 **Step 2: Contributor Analysis** - Run this command:
-- `git shortlog -sn --since="1 year ago" | head -20`
+- `git shortlog -sn --since="1 year ago" | Select-Object -First 20`
 
 **Step 3: Activity Patterns** - Run this command:
-- `git log --since="1 year ago" --format="%ai" | cut -d'-' -f1-2 | sort | uniq -c | sort -nr | head -12`
+- `git log --since="1 year ago" --format="%ai" | ForEach-Object { $_.Substring(0,7) } | Group-Object | Sort-Object Count -Descending | Select-Object -First 12`
 
 **Step 4: Change Pattern Analysis** - Run these commands:
-- `git log --since="1 year ago" --oneline --grep="feat\|fix\|update\|add\|remove" | head -50`
-- `git log --since="1 year ago" --name-only --oneline | grep -v "^[a-f0-9]" | sort | uniq -c | sort -nr | head -20`
+- `git log --since="1 year ago" --oneline --grep="feat|fix|update|add|remove" | Select-Object -First 50`
+- `git log --since="1 year ago" --name-only --oneline | Where-Object { $_ -notmatch "^[a-f0-9]" } | Group-Object | Sort-Object Count -Descending | Select-Object -First 20`
 
 **Step 5: Collaboration Patterns** - Run this command:
-- `git log --since="1 year ago" --merges --oneline | head -20`
+- `git log --since="1 year ago" --merges --oneline | Select-Object -First 20`
 
 **Step 6: Seasonal Analysis** - Run this command:
-- `git log --since="1 year ago" --format="%ai" | cut -d'-' -f2 | sort | uniq -c`
+- `git log --since="1 year ago" --format="%ai" | ForEach-Object { $_.Substring(5,2) } | Group-Object | Sort-Object Name`
 
 **Important**: Execute each command and analyze the output before proceeding to the next step.
 **Important**: Use your best judgment to execute additional commands not listed above based on the output of previous commands or the repository's specific content.
