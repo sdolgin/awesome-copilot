@@ -1,8 +1,9 @@
 ---
 mode: 'agent'
 description: 'Generate a comprehensive repository summary and narrative story from commit history'
-tools: ['semantic_search', 'file_search', 'read_file', 'list_dir', 'run_in_terminal', 'create_file']
+tools: ['changes', 'codebase', 'editFiles', 'githubRepo', 'runCommands', 'runTasks', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection']
 ---
+
 
 ## Role
 
@@ -15,21 +16,21 @@ Transform any repository into a comprehensive analysis with two deliverables:
 1. **REPOSITORY_SUMMARY.md** - Technical architecture and purpose overview
 2. **THE_STORY_OF_THIS_REPO.md** - Narrative story from commit history analysis
 
+**CRITICAL**: You must CREATE and WRITE these files with complete markdown content. Do NOT output the markdown content in the chat - use the `editFiles` tool to create the actual files in the repository root directory.
+
 ## Methodology
 
 ### Phase 1: Repository Exploration
 
-Start by understanding the repository structure and purpose:
+**EXECUTE these commands immediately** to understand the repository structure and purpose:
 
-```bash
-# Get repository overview
-find . -name "*.md" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" | head -20
+1. Get repository overview by running:
+   `find . -name "*.md" -o -name "*.json" -o -name "*.yaml" -o -name "*.yml" | head -20`
 
-# Understand project structure
-tree -L 3 -I 'node_modules|.git|bin|obj'
-```
+2. Understand project structure by running:
+   `tree -L 3 -I 'node_modules|.git|bin|obj'` (or use `ls -la` if tree is not available)
 
-Use semantic search to understand key concepts and technologies. Look for:
+After executing these commands, use semantic search to understand key concepts and technologies. Look for:
 - Configuration files (package.json, pom.xml, requirements.txt, etc.)
 - README files and documentation
 - Main source directories
@@ -45,31 +46,31 @@ Create comprehensive technical inventory:
 - **Data Flow**: How does information move through the system?
 
 ### Phase 3: Commit History Analysis
-Execute these git commands to understand repository evolution:
 
-```bash
-# Get basic repository statistics
-git rev-list --all --count
-git log --oneline --since="1 year ago" | wc -l
+**EXECUTE these git commands systematically** to understand repository evolution:
 
-# Analyze contributor patterns
-git shortlog -sn --since="1 year ago" | head -20
+**Step 1: Basic Statistics** - Run these commands to get repository metrics:
+- `git rev-list --all --count` (total commit count)
+- `git log --oneline --since="1 year ago" | wc -l` (commits in last year)
 
-# Find most active periods
-git log --since="1 year ago" --format="%ai" | cut -d'-' -f1-2 | sort | uniq -c | sort -nr | head -12
+**Step 2: Contributor Analysis** - Run this command:
+- `git shortlog -sn --since="1 year ago" | head -20`
 
-# Identify major change patterns
-git log --since="1 year ago" --oneline --grep="feat\|fix\|update\|add\|remove" | head -50
+**Step 3: Activity Patterns** - Run this command:
+- `git log --since="1 year ago" --format="%ai" | cut -d'-' -f1-2 | sort | uniq -c | sort -nr | head -12`
 
-# Analyze file change patterns
-git log --since="1 year ago" --name-only --oneline | grep -v "^[a-f0-9]" | sort | uniq -c | sort -nr | head -20
+**Step 4: Change Pattern Analysis** - Run these commands:
+- `git log --since="1 year ago" --oneline --grep="feat\|fix\|update\|add\|remove" | head -50`
+- `git log --since="1 year ago" --name-only --oneline | grep -v "^[a-f0-9]" | sort | uniq -c | sort -nr | head -20`
 
-# Find merge patterns (team collaboration)
-git log --since="1 year ago" --merges --oneline | head -20
+**Step 5: Collaboration Patterns** - Run this command:
+- `git log --since="1 year ago" --merges --oneline | head -20`
 
-# Seasonal analysis
-git log --since="1 year ago" --format="%ai" | cut -d'-' -f2 | sort | uniq -c
-```
+**Step 6: Seasonal Analysis** - Run this command:
+- `git log --since="1 year ago" --format="%ai" | cut -d'-' -f2 | sort | uniq -c`
+
+**Important**: Execute each command and analyze the output before proceeding to the next step.
+**Important**: Use your best judgment to execute additional commands not listed above based on the output of previous commands or the repository's specific content.
 
 ### Phase 4: Pattern Recognition
 Look for these narrative elements:
@@ -140,10 +141,16 @@ Where the repository stands today and future implications.
 
 ## Success Criteria
 
-- Both markdown files are created with comprehensive content
+- Both markdown files are **ACTUALLY CREATED** with complete, comprehensive content using the `editFiles` tool
+- **NO markdown content should be output to chat** - all content must be written directly to the files
 - Technical summary accurately represents repository architecture
 - Narrative story reveals human patterns and interesting insights
 - Git commands provide concrete evidence for all claims
 - Analysis reveals both technical and cultural aspects of development
+- Files are ready to use immediately without any copy/paste from chat dialog
+
+## Critical Final Instructions
+
+**DO NOT** output markdown content in the chat. **DO** use the `editFiles` tool to create both files with complete content. The deliverables are the actual files, not chat output.
 
 Remember: Every repository tells a story. Your job is to uncover that story through systematic analysis and present it in a way that both technical and non-technical audiences can appreciate.
